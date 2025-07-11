@@ -35,6 +35,8 @@ public class GUI implements ActionListener{
         Button btn13 = new Button("Btn 13");
         Button btn14 = new Button("Btn 14");
         Button btn15 = new Button("Btn 15");
+        Button btn16 = new Button("Btn 16");
+        // // JTextField diceTypeField = new JTextField(5);
 
 
         // // JTextField diceTypeField = new JTextField(5);
@@ -49,9 +51,20 @@ public class GUI implements ActionListener{
         gcon.weighty = 1;
         gcon.fill = GridBagConstraints.BOTH;
 
+
         // Creates an array with lots of buttons and the spaces they occupy. if the same button occupies 2 indexes, it's because it's a larger button. In a later version of this program, the buttons will be switched with different components. It is then sent into a method which adds them to the panel in a formated way according to how they've been placed in the array.
-        Component[] buttonArray = {btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn8, btn9, btn10, btn10, btn11, btn12, btn13, btn14, btn14, btn14, btn15, btn15, btn15, btn15, btn15, btn15};
+        Component[] buttonArray = {btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn8, btn9, btn10, btn10, btn11, btn12, btn13};
         componentFormater(buttonArray, 3);
+
+        // Creates arrays for the last 3 components and their positions + dimensions for feeding into a method that manually adds their widths, heights and positions.
+        Component[] buttonArray2 = {btn14, btn15, btn16};
+        int[][] positions = {
+            {0, 0, 1, 1},
+            {0, 1, 1, 1},
+            {1, 0, 2, 2}
+        };
+        manualComponentFormater(buttonArray2, buttonArray, positions);
+
 
         // Adds the panel to the frame and changes some frame settings before setting it to be visible.
         frame.setSize(180, 480);
@@ -65,6 +78,19 @@ public class GUI implements ActionListener{
         
     }
     
+
+    // A method for manually formating components, using an array of components to format, an array of previously formated components, and an array of the positions and dimensions of the components.
+    private void manualComponentFormater(Component[] components, Component[] previousComponents, int[][] positions) {
+        for (int i = 0; i<components.length; i++) {
+            // It collects the information to give to gcon from the positions array.
+            gcon.gridx = positions[i][0];
+            gcon.gridy = positions[i][1] + (int) Math.floor((float) previousComponents.length/3);
+            gcon.gridwidth = positions[i][2];
+            gcon.gridheight = positions[i][3];
+            gbl.setConstraints(components[i], gcon);
+            panel.add(components[i]);
+        }
+    }
 
 
     // A method for organising components in a grid when some components are wider and taller than others. Only works when components are wider before they are taller. It's very specific to the planned layout.
