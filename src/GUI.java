@@ -4,10 +4,17 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.text.StyledDocument;
+import javax.swing.JSpinner;
 public class GUI implements ActionListener{
 
     // Defines some components for use in all classes and methods.
@@ -19,30 +26,40 @@ public class GUI implements ActionListener{
     // The GUI method, where all the work to create the GUI happens.
     public GUI() {
 
-        // Defines 15 different buttons.
-        Button btn1 = new Button("Btn 1");
-        Button btn2 = new Button("Btn 2");
-        Button btn3 = new Button("Btn 3");
-        Button btn4 = new Button("Btn 4");
-        Button btn5 = new Button("Btn 5");
-        Button btn6 = new Button("Btn 6");
-        Button btn7 = new Button("Btn 7");
-        Button btn8 = new Button("Btn 8");
-        Button btn9 = new Button("Btn 9");
-        Button btn10 = new Button("Btn 10");
-        Button btn11 = new Button("Btn 11");
-        Button btn12 = new Button("Btn 12");
-        Button btn13 = new Button("Btn 13");
-        Button btn14 = new Button("Btn 14");
-        Button btn15 = new Button("Btn 15");
-        Button btn16 = new Button("Btn 16");
-        // // JTextField diceTypeField = new JTextField(5);
+        // Defines 15 different JButtons.
+        JSpinner comp1 = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+        
+        JLabel comp2 = new JLabel("d", JLabel.CENTER);
+        JSpinner comp3 = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+
+        JCheckBox comp4 = new JCheckBox();
+        JLabel comp5 = new JLabel("Success");
+        JSpinner comp6 = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+        
+        JCheckBox comp7 = new JCheckBox();
+        JLabel comp8 = new JLabel("Exploding crits");
+
+        JCheckBox comp9 = new JCheckBox();
+        JLabel comp10 = new JLabel("Double crits");
+
+        JCheckBox comp11 = new JCheckBox();
+        JLabel comp12 = new JLabel("Compute");
+        String[] choiceStrings = {"+", "-", "*", "/"};
+        JComboBox comp13 = new JComboBox(choiceStrings);
+        
+        JButton comp14 = new JButton("R");
+        JButton comp15 = new JButton("C");
+        JTextPane comp16 = new JTextPane();
+        comp16.setEditable(false);
+        comp16.setText("Output");
+        
+        // comp16.setEditable(false);
 
 
-        // // JTextField diceTypeField = new JTextField(5);
+        int border = 15;
 
         // Sets the border and layout of the panel.
-        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panel.setBorder(BorderFactory.createEmptyBorder(border, border, border, border));
         panel.setLayout(gbl);
         
 
@@ -52,22 +69,22 @@ public class GUI implements ActionListener{
         gcon.fill = GridBagConstraints.BOTH;
 
 
-        // Creates an array with lots of buttons and the spaces they occupy. if the same button occupies 2 indexes, it's because it's a larger button. In a later version of this program, the buttons will be switched with different components. It is then sent into a method which adds them to the panel in a formated way according to how they've been placed in the array.
-        Component[] buttonArray = {btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn8, btn9, btn10, btn10, btn11, btn12, btn13};
-        componentFormater(buttonArray, 3);
+        // Creates an array with lots of JButtons and the spaces they occupy. if the same JButton occupies 2 indexes, it's because it's a larger JButton. In a later version of this program, the JButtons will be switched with different components. It is then sent into a method which adds them to the panel in a formated way according to how they've been placed in the array.
+        Component[] JButtonArray = {comp1, comp2, comp3, comp4, comp5, comp6, comp7, comp8, comp8, comp9, comp10, comp10, comp11, comp12, comp13};
+        componentFormater(JButtonArray, 3);
 
         // Creates arrays for the last 3 components and their positions + dimensions for feeding into a method that manually adds their widths, heights and positions.
-        Component[] buttonArray2 = {btn14, btn15, btn16};
+        Component[] JButtonArray2 = {comp14, comp15, comp16};
         int[][] positions = {
             {0, 0, 1, 1},
             {0, 1, 1, 1},
             {1, 0, 2, 2}
         };
-        manualComponentFormater(buttonArray2, buttonArray, positions);
+        manualComponentFormater(JButtonArray2, JButtonArray, positions);
 
 
         // Adds the panel to the frame and changes some frame settings before setting it to be visible.
-        frame.setSize(180, 480);
+        frame.setSize(180+border*2, 480+border*2);
         frame.setLocationRelativeTo(null);
         frame.add(panel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -147,6 +164,7 @@ public class GUI implements ActionListener{
 
 
     public static void main(String[] args) throws Exception {
+        javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         new GUI();
     }
 
