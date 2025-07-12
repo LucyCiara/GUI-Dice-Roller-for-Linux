@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -9,13 +12,15 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.text.StyledDocument;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.JSpinner;
-public class GUI implements ActionListener{
+public class GUI{
 
     // Defines some components for use in all classes and methods.
     private JFrame frame = new JFrame();
@@ -23,35 +28,155 @@ public class GUI implements ActionListener{
     private GridBagLayout gbl = new GridBagLayout();
     private GridBagConstraints gcon = new GridBagConstraints();
 
+    private static JSpinner comp1;
+    private static JLabel comp2;
+    private static JSpinner comp3;
+    private static JCheckBox comp4;
+    private static JLabel comp5;
+    private static JSpinner comp6;
+    private static JCheckBox comp7;
+    private static JLabel comp8;
+    private static JCheckBox comp9;
+    private static JLabel comp10;
+    private static JCheckBox comp11;
+    private static JLabel comp12;
+    private static JComboBox comp13;
+    private static JButton comp14;
+    private static JButton comp15;
+    private static JTextPane outputTextPane;
+    private static JScrollPane comp16;
+    private Random r = new Random();
+
+
     // The GUI method, where all the work to create the GUI happens.
     public GUI() {
-
         // Defines 15 different JButtons.
-        JSpinner comp1 = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+        comp1 = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
+        comp2 = new JLabel("d", JLabel.CENTER);
+        comp3 = new JSpinner(new SpinnerNumberModel(2, 2, null, 1));
+
+        comp4 = new JCheckBox();
+        comp5 = new JLabel("Success");
+        comp6 = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
         
-        JLabel comp2 = new JLabel("d", JLabel.CENTER);
-        JSpinner comp3 = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
+        comp7 = new JCheckBox();
+        comp8 = new JLabel("Exploding crits");
 
-        JCheckBox comp4 = new JCheckBox();
-        JLabel comp5 = new JLabel("Success");
-        JSpinner comp6 = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
-        
-        JCheckBox comp7 = new JCheckBox();
-        JLabel comp8 = new JLabel("Exploding crits");
+        comp9 = new JCheckBox();
+        comp10 = new JLabel("Double crits");
 
-        JCheckBox comp9 = new JCheckBox();
-        JLabel comp10 = new JLabel("Double crits");
-
-        JCheckBox comp11 = new JCheckBox();
-        JLabel comp12 = new JLabel("Compute");
+        comp11 = new JCheckBox();
+        comp12 = new JLabel("Compute");
         String[] choiceStrings = {"+", "-", "*", "/"};
-        JComboBox comp13 = new JComboBox(choiceStrings);
+        comp13 = new JComboBox(choiceStrings);
         
-        JButton comp14 = new JButton("R");
-        JButton comp15 = new JButton("C");
-        JTextPane comp16 = new JTextPane();
-        comp16.setEditable(false);
-        comp16.setText("Output");
+        comp14 = new JButton("R");
+        comp14.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int diceAmount = (int) comp1.getValue();
+                int diceType = (int) comp3.getValue();
+
+                boolean successEnabled = (boolean) comp4.isSelected();
+                int successNumber = (int) comp6.getValue();
+
+                boolean explodes = (boolean) comp7.isSelected();
+                boolean critDoubles = (boolean) comp9.isSelected();
+
+                boolean computes = (boolean) comp11.isSelected();
+                String operationType = (String) comp13.getSelectedItem();
+                
+                String[] printLineStrings = {};
+
+                int min = 1;
+                int max = diceType+1;
+                int[] diceRolls = {};
+                for (int i = 0; i<diceAmount; i++) {
+                    diceRolls = Arrays.copyOf(diceRolls, diceRolls.length+1);
+                    diceRolls[i] = r.nextInt(min, max);
+                }
+
+                if (explodes) {
+                    for (int i = 0; i<diceRolls.length; i++) {
+                        if (diceRolls[i] == diceType) {
+                            diceRolls = Arrays.copyOf(diceRolls, diceRolls.length+1);
+                            diceRolls[diceRolls.length-1] = r.nextInt(min, max);
+                        }
+                    }
+                }
+
+                String diceRollString = "";
+                for (int i = 0; i<diceRolls.length-1; i++) {
+                    diceRollString += (Integer.toString(diceRolls[i]) + ", ");
+                }
+                diceRollString += diceRolls[diceRolls.length-1];
+                printLineStrings = Arrays.copyOf(printLineStrings, printLineStrings.length+2);
+                printLineStrings[0] = "Dice rolls:";
+                printLineStrings[1] = diceRollString;
+
+                if (successEnabled) {
+                    int numberOfSuccesses = 0;
+                    for (int i = 0; i<diceRolls.length; i++) {
+                        if (critDoubles && diceRolls[i] == diceType) {
+                            numberOfSuccesses += 2;
+                        }else if(diceRolls[i] >= successNumber) {
+                            numberOfSuccesses += 1;
+                        }
+                    }
+                    printLineStrings = Arrays.copyOf(printLineStrings, printLineStrings.length+2);
+                    printLineStrings[printLineStrings.length-2] = "Number of successes:";
+                    printLineStrings[printLineStrings.length-1] = Integer.toString(numberOfSuccesses);
+                }
+
+                if (computes) {
+                    float sum = diceRolls[0];
+                    if (operationType == "+") {
+                        sum = (float) IntStream.of(diceRolls).sum();
+                    }else if (operationType == "-") {
+                        for (int i = 1; i<diceRolls.length; i++) {
+                            sum -= (float) diceRolls[i];
+                        }
+                    }else if (operationType == "*") {
+                        for (int i = 1; i<diceRolls.length; i++) {
+                            sum *= (float) diceRolls[i];
+                        }
+                    }else if (operationType == "/") {
+                        for (int i = 1; i<diceRolls.length; i++) {
+                            sum /= (float) diceRolls[i];
+                        }
+                    }
+                    printLineStrings = Arrays.copyOf(printLineStrings, printLineStrings.length+2);
+                    printLineStrings[printLineStrings.length-2] = "Sum:";
+                    printLineStrings[printLineStrings.length-1] = Float.toString(sum);
+                }
+                Document doc = outputTextPane.getDocument();
+                for (int i = 0; i<printLineStrings.length; i++) {
+                    try {
+                        doc.insertString(doc.getLength(), printLineStrings[i] + "\n", null);
+                    } catch (BadLocationException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
+                try {
+                    doc.insertString(doc.getLength(), "\n", null);
+                } catch (BadLocationException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        });
+        comp15 = new JButton("C");
+        comp15.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                outputTextPane.setText("");
+            }
+        });
+        outputTextPane = new JTextPane();
+        outputTextPane.setEditable(false);
+        comp16 = new JScrollPane(outputTextPane);
+        comp16.setAutoscrolls(true);
         
         // comp16.setEditable(false);
 
@@ -135,7 +260,7 @@ public class GUI implements ActionListener{
                 // Calculates the width and height of the component.
                 if (occurances >= gridW) {
                     objW = gridW;
-                }else{
+                }else {
                     objW = occurances;
                 }
 
@@ -164,12 +289,8 @@ public class GUI implements ActionListener{
 
 
     public static void main(String[] args) throws Exception {
-        javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         new GUI();
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        System.out.println("pass");
-    }
 }
