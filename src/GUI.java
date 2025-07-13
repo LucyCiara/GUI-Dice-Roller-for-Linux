@@ -64,7 +64,7 @@ public class GUI{
         // These are the success specific components.
         JSuccessCheckBox = new JCheckBox();
         JSuccessLabel = new JLabel("Success");
-        JSuccessSpinner = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
+        JSuccessSpinner = new JSpinner(new SpinnerNumberModel(2, 2, null, 1));
         
         // These are the components related to exploding dice.
         JExplodesCheckBox = new JCheckBox();
