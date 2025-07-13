@@ -38,6 +38,8 @@ public class GUI{
     private static JLabel comp8;
     private static JCheckBox comp9;
     private static JLabel comp10;
+    private static JCheckBox comp10a;
+    private static JLabel comp10b;
     private static JCheckBox comp11;
     private static JLabel comp12;
     private static JComboBox comp13;
@@ -65,6 +67,10 @@ public class GUI{
         comp9 = new JCheckBox();
         comp10 = new JLabel("Double crits");
 
+        comp10a = new JCheckBox();
+        comp10b = new JLabel("1s cancel");
+
+
         comp11 = new JCheckBox();
         comp12 = new JLabel("Compute");
         String[] choiceStrings = {"+", "-", "*", "/"};
@@ -82,6 +88,8 @@ public class GUI{
 
                 boolean explodes = (boolean) comp7.isSelected();
                 boolean critDoubles = (boolean) comp9.isSelected();
+
+                boolean cancelling1s = (boolean) comp10a.isSelected();
 
                 boolean computes = (boolean) comp11.isSelected();
                 String operationType = (String) comp13.getSelectedItem();
@@ -119,7 +127,9 @@ public class GUI{
                     for (int i = 0; i<diceRolls.length; i++) {
                         if (critDoubles && diceRolls[i] == diceType) {
                             numberOfSuccesses += 2;
-                        }else if(diceRolls[i] >= successNumber) {
+                        }else if (cancelling1s && diceRolls[i] == 1) {
+                            numberOfSuccesses -= 1;
+                        }else if (diceRolls[i] >= successNumber) {
                             numberOfSuccesses += 1;
                         }
                     }
@@ -195,7 +205,7 @@ public class GUI{
 
 
         // Creates an array with lots of JButtons and the spaces they occupy. if the same JButton occupies 2 indexes, it's because it's a larger JButton. In a later version of this program, the JButtons will be switched with different components. It is then sent into a method which adds them to the panel in a formated way according to how they've been placed in the array.
-        Component[] JButtonArray = {comp1, comp2, comp3, comp4, comp5, comp6, comp7, comp8, comp8, comp9, comp10, comp10, comp11, comp12, comp13};
+        Component[] JButtonArray = {comp1, comp2, comp3, comp4, comp5, comp6, comp7, comp8, comp8, comp9, comp10, comp10, comp10a, comp10b, comp10b, comp11, comp12, comp13};
         componentFormater(JButtonArray, 3);
 
         // Creates arrays for the last 3 components and their positions + dimensions for feeding into a method that manually adds their widths, heights and positions.
