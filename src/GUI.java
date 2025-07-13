@@ -1,10 +1,14 @@
+// Imports everuthing from the awt library, and a specific event and eventlistener.
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+// Imports some java utilities.
 import java.util.Random;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+// Imports swing components and formatting tools.
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -16,86 +20,94 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.JSpinner;
-public class GUI{
 
+public class GUI{
     // Defines some components for use in all classes and methods.
     private JFrame frame = new JFrame();
     private JPanel panel = new JPanel();
     private GridBagLayout gbl = new GridBagLayout();
     private GridBagConstraints gcon = new GridBagConstraints();
 
-    private static JSpinner comp1;
-    private static JLabel comp2;
-    private static JSpinner comp3;
-    private static JCheckBox comp4;
-    private static JLabel comp5;
-    private static JSpinner comp6;
-    private static JCheckBox comp7;
-    private static JLabel comp8;
-    private static JCheckBox comp9;
-    private static JLabel comp10;
-    private static JCheckBox comp10a;
-    private static JLabel comp10b;
-    private static JCheckBox comp11;
-    private static JLabel comp12;
-    private static JComboBox comp13;
-    private static JButton comp14;
-    private static JButton comp15;
-    private static JTextPane outputTextPane;
-    private static JScrollPane comp16;
+    // Defines all the components to be used.
+    private static JSpinner JDiceAmountSpinner;
+    private static JLabel JDiceLabel;
+    private static JSpinner JDiceTypeSpinner;
+    private static JCheckBox JSuccessCheckBox;
+    private static JLabel JSuccessLabel;
+    private static JSpinner JSuccessSpinner;
+    private static JCheckBox JExplodesCheckBox;
+    private static JLabel JExplodesLabel;
+    private static JCheckBox JDoubleCheckBox;
+    private static JLabel JDoubleLabel;
+    private static JCheckBox JCancelCheckBox;
+    private static JLabel JCancelLabel;
+    private static JCheckBox JComputationCheckBox;
+    private static JLabel JComputationLabel;
+    private static JComboBox JComputationComboBox;
+    private static JButton JRollButton;
+    private static JButton JClearButton;
+    private static JTextPane JOutputTextPane;
+    private static JScrollPane JOutputScrollPane;
     private Random r = new Random();
 
 
     // The GUI method, where all the work to create the GUI happens.
     public GUI() {
-        // Defines 15 different JButtons.
-        comp1 = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
-        comp2 = new JLabel("d", JLabel.CENTER);
-        comp3 = new JSpinner(new SpinnerNumberModel(2, 2, null, 1));
+        // These are the dice related components.
+        JDiceAmountSpinner = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
+        JDiceLabel = new JLabel("d", JLabel.CENTER);
+        JDiceTypeSpinner = new JSpinner(new SpinnerNumberModel(2, 2, null, 1));
 
-        comp4 = new JCheckBox();
-        comp5 = new JLabel("Success");
-        comp6 = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
+        // These are the success specific components.
+        JSuccessCheckBox = new JCheckBox();
+        JSuccessLabel = new JLabel("Success");
+        JSuccessSpinner = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
         
-        comp7 = new JCheckBox();
-        comp8 = new JLabel("Exploding crits");
+        // These are the components related to exploding dice.
+        JExplodesCheckBox = new JCheckBox();
+        JExplodesLabel = new JLabel("Exploding crits");
 
-        comp9 = new JCheckBox();
-        comp10 = new JLabel("Double crits");
+        // These are the components related to counting crits as double the successes.
+        JDoubleCheckBox = new JCheckBox();
+        JDoubleLabel = new JLabel("Double crits");
 
-        comp10a = new JCheckBox();
-        comp10b = new JLabel("1s cancel");
+        // These are the components related to counting 1s as reducing the successes by one.
+        JCancelCheckBox = new JCheckBox();
+        JCancelLabel = new JLabel("1s cancel");
 
-
-        comp11 = new JCheckBox();
-        comp12 = new JLabel("Compute");
+        // These are the components related to computing with the dice rolls.
+        JComputationCheckBox = new JCheckBox();
+        JComputationLabel = new JLabel("Compute");
         String[] choiceStrings = {"+", "-", "*", "/"};
-        comp13 = new JComboBox(choiceStrings);
+        JComputationComboBox = new JComboBox(choiceStrings);
         
-        comp14 = new JButton("R");
-        comp14.addActionListener(new ActionListener() {
+        // This is the button which rolls the dice and makes stuff happen.
+        JRollButton = new JButton("R");
+        JRollButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int diceAmount = (int) comp1.getValue();
-                int diceType = (int) comp3.getValue();
+                // Fetches the different values and states of the different components.
+                int diceAmount = (int) JDiceAmountSpinner.getValue();
+                int diceType = (int) JDiceTypeSpinner.getValue();
 
-                boolean successEnabled = (boolean) comp4.isSelected();
-                int successNumber = (int) comp6.getValue();
+                boolean successEnabled = (boolean) JSuccessCheckBox.isSelected();
+                int successNumber = (int) JSuccessSpinner.getValue();
 
-                boolean explodes = (boolean) comp7.isSelected();
-                boolean critDoubles = (boolean) comp9.isSelected();
+                boolean explodes = (boolean) JExplodesCheckBox.isSelected();
+                boolean critDoubles = (boolean) JDoubleCheckBox.isSelected();
 
-                boolean cancelling1s = (boolean) comp10a.isSelected();
+                boolean cancelling1s = (boolean) JCancelCheckBox.isSelected();
 
-                boolean computes = (boolean) comp11.isSelected();
-                String operationType = (String) comp13.getSelectedItem();
+                boolean computes = (boolean) JComputationCheckBox.isSelected();
+                String operationType = (String) JComputationComboBox.getSelectedItem();
                 
+                // This is the string array which contains what will be showed in the output panel.
                 String[] printLineStrings = {};
 
+                // "Rolls dice" (generates a random number depending on the dice type) and adds them to the diceRolls array for further processing.
                 int min = 1;
                 int max = diceType+1;
                 int[] diceRolls = {};
@@ -104,6 +116,7 @@ public class GUI{
                     diceRolls[i] = r.nextInt(min, max);
                 }
 
+                // Checks for "critical" (maximum) rolls, and rolls another dice for each one, including new criticals rolled.
                 if (explodes) {
                     for (int i = 0; i<diceRolls.length; i++) {
                         if (diceRolls[i] == diceType) {
@@ -113,6 +126,7 @@ public class GUI{
                     }
                 }
 
+                // Processes the dice rolls into a string to add to the output panel.
                 String diceRollString = "";
                 for (int i = 0; i<diceRolls.length-1; i++) {
                     diceRollString += (Integer.toString(diceRolls[i]) + ", ");
@@ -122,6 +136,7 @@ public class GUI{
                 printLineStrings[0] = "Dice rolls:";
                 printLineStrings[1] = diceRollString;
 
+                // Counts the number of successes based on whether doubling the successes of a roll on a critical or reducing the number of successes by one on a 1 is enabled, and whether the rolled number is at or above the success threshold. Then it adds it to the lines to be output.
                 if (successEnabled) {
                     int numberOfSuccesses = 0;
                     for (int i = 0; i<diceRolls.length; i++) {
@@ -129,7 +144,7 @@ public class GUI{
                             numberOfSuccesses += 2;
                         }else if (cancelling1s && diceRolls[i] == 1) {
                             numberOfSuccesses -= 1;
-                        }else if (diceRolls[i] >= successNumber) {
+                        }else if ((diceRolls[i] >= successNumber) || (diceRolls[i] == diceType)) {
                             numberOfSuccesses += 1;
                         }
                     }
@@ -138,6 +153,7 @@ public class GUI{
                     printLineStrings[printLineStrings.length-1] = Integer.toString(numberOfSuccesses);
                 }
 
+                // If computing rolls is enabled, it will create a sum based on the operation type enabled, then add it to the strings to be output.
                 if (computes) {
                     float sum = diceRolls[0];
                     if (operationType == "+") {
@@ -159,7 +175,9 @@ public class GUI{
                     printLineStrings[printLineStrings.length-2] = "Sum:";
                     printLineStrings[printLineStrings.length-1] = Float.toString(sum);
                 }
-                Document doc = outputTextPane.getDocument();
+
+                // Adds the text to be output as lines in the document of the output textpane.
+                Document doc = JOutputTextPane.getDocument();
                 for (int i = 0; i<printLineStrings.length; i++) {
                     try {
                         doc.insertString(doc.getLength(), printLineStrings[i] + "\n", null);
@@ -176,21 +194,23 @@ public class GUI{
                 }
             }
         });
-        comp15 = new JButton("C");
-        comp15.addActionListener(new ActionListener() {
+
+        // The button which clears the output textpane of all text.
+        JClearButton = new JButton("C");
+        JClearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                outputTextPane.setText("");
+                JOutputTextPane.setText("");
             }
         });
-        outputTextPane = new JTextPane();
-        outputTextPane.setEditable(false);
-        comp16 = new JScrollPane(outputTextPane);
-        comp16.setAutoscrolls(true);
-        
-        // comp16.setEditable(false);
 
+        // The Textpane and scrollpane in which the output is displayed
+        JOutputTextPane = new JTextPane();
+        JOutputTextPane.setEditable(false);
+        JOutputScrollPane = new JScrollPane(JOutputTextPane);
+        JOutputScrollPane.setAutoscrolls(true);
 
+        // The border around the components and the edges of the window.
         int border = 15;
 
         // Sets the border and layout of the panel.
@@ -205,18 +225,17 @@ public class GUI{
 
 
         // Creates an array with lots of JButtons and the spaces they occupy. if the same JButton occupies 2 indexes, it's because it's a larger JButton. In a later version of this program, the JButtons will be switched with different components. It is then sent into a method which adds them to the panel in a formated way according to how they've been placed in the array.
-        Component[] JButtonArray = {comp1, comp2, comp3, comp4, comp5, comp6, comp7, comp8, comp8, comp9, comp10, comp10, comp10a, comp10b, comp10b, comp11, comp12, comp13};
+        Component[] JButtonArray = {JDiceAmountSpinner, JDiceLabel, JDiceTypeSpinner, JSuccessCheckBox, JSuccessLabel, JSuccessSpinner, JExplodesCheckBox, JExplodesLabel, JExplodesLabel, JDoubleCheckBox, JDoubleLabel, JDoubleLabel, JCancelCheckBox, JCancelLabel, JCancelLabel, JComputationCheckBox, JComputationLabel, JComputationComboBox};
         componentFormater(JButtonArray, 3);
 
         // Creates arrays for the last 3 components and their positions + dimensions for feeding into a method that manually adds their widths, heights and positions.
-        Component[] JButtonArray2 = {comp14, comp15, comp16};
+        Component[] JButtonArray2 = {JRollButton, JClearButton, JOutputScrollPane};
         int[][] positions = {
             {0, 0, 1, 1},
             {0, 1, 1, 1},
             {1, 0, 2, 2}
         };
         manualComponentFormater(JButtonArray2, JButtonArray, positions);
-
 
         // Adds the panel to the frame and changes some frame settings before setting it to be visible.
         frame.setSize(180+border*2, 480+border*2);
@@ -273,13 +292,6 @@ public class GUI{
                 }else {
                     objW = occurances;
                 }
-
-                if (i == 18) {
-                    System.out.println("Shitbag");
-                }
-
-
-
                 objH = (int) Math.ceil((float) occurances/gridW);
 
                 // Sets the gcon settings for the component.
@@ -297,9 +309,12 @@ public class GUI{
         }
     }
 
-
+    // The main loop.
     public static void main(String[] args) throws Exception {
+        // Sets the LookAndFeel to be the motif LookAndFeel, because I like the retro look.
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+
+        // Calls on the GUI.
         new GUI();
     }
 
