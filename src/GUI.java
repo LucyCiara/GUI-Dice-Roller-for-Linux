@@ -46,7 +46,7 @@ public class GUI{
     private static JLabel JCancelLabel;
     private static JCheckBox JComputationCheckBox;
     private static JLabel JComputationLabel;
-    private static JComboBox JComputationComboBox;
+    private static JComboBox<String> JComputationComboBox;
     private static JButton JRollButton;
     private static JButton JClearButton;
     private static JTextPane JOutputTextPane;
@@ -82,7 +82,7 @@ public class GUI{
         JComputationCheckBox = new JCheckBox();
         JComputationLabel = new JLabel("Compute");
         String[] choiceStrings = {"+", "-", "*", "/"};
-        JComputationComboBox = new JComboBox(choiceStrings);
+        JComputationComboBox = new JComboBox<>(choiceStrings);
         
         // This is the button which rolls the dice and makes stuff happen.
         JRollButton = new JButton("R");
@@ -182,14 +182,12 @@ public class GUI{
                     try {
                         doc.insertString(doc.getLength(), printLineStrings[i] + "\n", null);
                     } catch (BadLocationException e1) {
-                        // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
                 }
                 try {
                     doc.insertString(doc.getLength(), "\n", null);
                 } catch (BadLocationException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
             }
